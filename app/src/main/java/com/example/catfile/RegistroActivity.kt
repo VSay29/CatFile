@@ -31,41 +31,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.catfile.ui.theme.CatFileTheme
 
-class MainActivity : ComponentActivity() {
-
+class RegistroActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             CatFileTheme {
                 val navController = rememberNavController()
-
-                NavHost(
-                    navController = navController,
-                    startDestination = "main_catfile"
-                ) {
-                    composable("main_catfile") { CatFile(navController) }
-                    composable("home_catfile") { HomeActivity(navController) }
-                    composable("registro_catfile") { RegistroActivity(navController) }
-                }
+                RegistroActivity(navController)
             }
         }
     }
 }
 
 @Composable
-fun CatFile(navController : NavController) {
+fun RegistroActivity(navController : NavController) {
 
     var errorNombre by remember { mutableStateOf(false) }
     var errorPasswd by remember { mutableStateOf(false) }
+    var errorCorreo by remember { mutableStateOf(false) }
     var nombreUsuario by remember{mutableStateOf("")}
     var passwd by remember{mutableStateOf("")}
+    var correoElectronico by remember{mutableStateOf("")}
 
     Column(Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -84,6 +74,19 @@ fun CatFile(navController : NavController) {
             painter = painterResource(id = R.drawable.gatoprincipal),
             contentDescription = "Gato",
             modifier = Modifier.size(150.dp)
+        )
+
+        OutlinedTextField(
+            value = correoElectronico,
+            onValueChange = {
+                correoElectronico = it
+                errorCorreo = correoElectronico.isEmpty()
+            },
+            label = {Text("Correo Electrónico")},
+            isError = errorCorreo,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         )
 
         OutlinedTextField(
@@ -112,23 +115,24 @@ fun CatFile(navController : NavController) {
                 .padding(8.dp)
         )
 
+        if(errorCorreo) Text(text = "El correo electrónico no puede estar vacío", color = MaterialTheme.colorScheme.error)
         if(errorNombre) Text(text = "El nombre no puede estar vacío", color = MaterialTheme.colorScheme.error)
         if(errorPasswd) Text(text = "La contraseña no puede estar vacía", color = MaterialTheme.colorScheme.error)
 
         Button(onClick = { navController.navigate("home_catfile") }) {
-            Text("Iniciar Sesión")
+            Text("Registrarse")
         }
-        Button(onClick = { navController.navigate("registro_catfile") }) {
-            Text("Ir a Registro")
+        Button(onClick = { navController.navigate("main_catfile") }) {
+            Text("Ir a Iniciar Sesión")
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun CatFilePreview() {
+fun RegistroPreview() {
     CatFileTheme {
         val navController = rememberNavController()
-        CatFile(navController)
+        RegistroActivity(navController)
     }
 }
